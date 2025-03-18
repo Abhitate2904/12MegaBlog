@@ -32,11 +32,16 @@ function Home() {
         <div className='w-full py-8'>
             <Container>
                 <div className='flex flex-wrap'>
-                    {subjects.map((subject) => (
-                        <div key={subject.$subjectid} className='p-2 w-1/4'>
-                            <PostCard title={subject.Subject} createdAt={subject.$createdAt} />
-                        </div>
-                    ))}
+                {subjects.map((subject) => (
+                <div key={subject.$subjectid} className='p-2 w-1/4'>
+                    <PostCard 
+                        title={subject.Subject} 
+                        createdAt={subject.$createdAt} 
+                        subjectid={subject.$id
+                        } 
+                    />
+                </div>
+            ))}
                 </div>
             </Container>
         </div>

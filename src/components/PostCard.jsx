@@ -1,15 +1,16 @@
 import React from 'react'
 import appwriteService from "../appwrite/config"
-import {Link} from 'react-router-dom'
+import {Link,useNavigate} from 'react-router-dom'
 
-function PostCard({ title, createdAt}) {
-    
+function PostCard({ title, createdAt,subjectid}) {
+  const navigate = useNavigate();
+  console.log("PostCard Component subjectid!" + subjectid);
   return (
-    <Link to={`/all-tests/${title}`}>
+    
         <div className='bg-gradient-to-r from-indigo-500 to-pink-500 
                text-white rounded-lg p-6 shadow-lg flex flex-col justify-center 
                transition-transform duration-300 transform hover:scale-105 hover:shadow-xl
-               m-3'>             
+               m-3' onClick={() => navigate(`/all-tests/${subjectid}`)}>             
             <h2
             className='text-xl font-bold text-center break-words'
             >{title}</h2>
@@ -21,7 +22,7 @@ function PostCard({ title, createdAt}) {
   })}
 </h3>
         </div>
-    </Link>
+     
   )
 }
 

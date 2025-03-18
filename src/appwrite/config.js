@@ -65,12 +65,12 @@ export class Service {
     }
   }
 
-  async getPost(slug) {
+  async getTestBySubject(subjectid) {
     try {
       return await this.databases.getDocument(
         conf.appwriteDatabaseId,
-        conf.appwriteCollectionId,
-        slug
+        conf.appwritetestCollectionId,
+        subjectid
       );
     } catch (error) {
       console.log("Appwrite serive :: getPost :: error", error);
@@ -95,6 +95,7 @@ export class Service {
 
   async getAllTest() {
     try {
+      
         const response = await this.databases.listDocuments(
             conf.appwriteDatabaseId,
             conf.appwritetestCollectionId            

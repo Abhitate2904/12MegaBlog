@@ -15,7 +15,7 @@ import EditPost from "./pages/EditPost";
 
 import Post from "./pages/Post";
 
-import AllPosts from "./pages/AllTest";
+import AllTest from "./pages/alltests.jsx";
 
 const router = createBrowserRouter([
   {
@@ -43,13 +43,16 @@ const router = createBrowserRouter([
             ),
         },
         {
-            path: "/all-posts",
-            element: (
-                <AuthLayout authentication>
-                    {" "}
-                    <AllPosts />
-                </AuthLayout>
-            ),
+            path: "/all-tests/:subjectid",
+            element:  
+                    <AllTest /> ,                
+            
+        },
+        {
+            path: "/all-tests",
+            element:  
+                    <AllTest /> ,                
+            
         },
         {
             path: "/add-post",

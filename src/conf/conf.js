@@ -6,6 +6,7 @@ const conf = {
     appwriteSubCollectionId: String(import.meta.env.VITE_APPWRITE_SUBCOLLECTION_ID),
     appwritetestCollectionId: String(import.meta.env.VITE_APPWRITE_TestCOLLECTION_ID),
     appwriteBucketId: String(import.meta.env.VITE_APPWRITE_BUCKET_ID),
+    appwritetestID:String(import.meta.env.VITE_APPWRITE_TestCOLLECTION_ID)
 }
 // there was a name issue with the import.meta.env.VITE_APPWRITE_URL, it was later fixed in debugging video
 
