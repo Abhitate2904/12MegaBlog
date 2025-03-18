@@ -13,6 +13,7 @@ import PostCard from "./PostCard";
 import AuthLayout from "./AuthLayout";
 import Input from "./Input";
 import DisplayTests from "./DisplayTests";
+import TestPage from "./testpage";
 export {
     Header,
     Footer,
@@ -29,4 +30,5 @@ export {
     Input,
     Select,
     DisplayTests,
+    TestPage
 }

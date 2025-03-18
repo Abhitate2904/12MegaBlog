@@ -65,16 +65,59 @@ export class Service {
     }
   }
 
-  async getTestBySubject(subjectid) {
+  async UpdateAnswers(questionId, userAnswer) {
     try {
-      return await this.databases.getDocument(
+      
+      const question = await this.databases.getDocument(
         conf.appwriteDatabaseId,
-        conf.appwritetestCollectionId,
-        subjectid
+        conf.appwritequestionID,
+        questionId
+      );
+     
+      if (!question) {
+        console.log("Question not found");
+        return;
+      }
+
+      const isCorrect = String(question.CorrectAnswer) === String(userAnswer);
+      const score = isCorrect ? 1 : 0;
+       
+
+      const response= await this.databases.updateDocument(
+        conf.appwriteDatabaseId,
+        conf.appwritequestionID,
+        questionId,
+        {
+          Anwsered: userAnswer,
+          Result: isCorrect,
+          Score: score
+        }
+      );
+ console.log("Response",question.tests.$id);
+ console.log("Response",question.tests.TestID);
+      const updateTest= await this.databases.updateDocument(
+        conf.appwriteDatabaseId,
+        conf.appwritetestID,
+        question.tests.$id,
+        {
+          Status: "Completed"
+        }
       );
     } catch (error) {
-      console.log("Appwrite serive :: getPost :: error", error);
-      return false;
+      console.log("Appwrite serive :: UpdateAnswers :: error", error);
+    }
+  }
+
+  async getTestQuestions() {
+    try {
+      const response = await this.databases.listDocuments(
+        conf.appwriteDatabaseId,
+        conf.appwritequestionID
+      );
+      return response.documents;
+    } catch (error) {
+      console.log("Appwrite Service :: getTestQuestions :: error", error);
+      return [];
     }
   }
 
@@ -95,13 +138,12 @@ export class Service {
 
   async getAllTest() {
     try {
-      
-        const response = await this.databases.listDocuments(
-            conf.appwriteDatabaseId,
-            conf.appwritetestCollectionId            
-        );
-        console.log("Test fetched:", response);
-        return response.documents;
+      const response = await this.databases.listDocuments(
+        conf.appwriteDatabaseId,
+        conf.appwritetestCollectionId
+      );
+      console.log("Test fetched:", response);
+      return response.documents;
     } catch (error) {}
   }
 
