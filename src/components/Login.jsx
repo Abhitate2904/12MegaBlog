@@ -15,22 +15,24 @@ function Login() {
   const login = async (data) => {
     setError("");
     try {
-      // **Step 1: Fetch existing sessions**
-      const sessions = await authService.getSessions();
-
-      // **Step 2: Delete all existing sessions**
-      if (sessions?.sessions?.length) {
-        for (const session of sessions.sessions) {
-            console.log("Deleting session:", session.$id);
-            await authService.deleteSession(session.$id);
-        }
-    }
-
       const session = await authService.login(data);
       if (session) {
         const userData = await authService.getCurrentUser();
-        if (userData) dispatch(authLogin(userData));
-        navigate("/");
+        if (userData) {
+          // **Step 3: Fetch all existing sessions**
+          const sessions = await authService.getSessions();
+
+           // **Step 4: Delete all previous sessions except the current one**
+           if (sessions?.sessions?.length) {
+            for (const oldSession of sessions.sessions) {
+                if (oldSession.$id !== session.$id) {
+                    await authService.deleteSession(oldSession.$id);
+                }
+            }
+        }
+          dispatch(authLogin(userData));
+          navigate("/");
+        }
       }
     } catch (error) {
       setError(error.message);
