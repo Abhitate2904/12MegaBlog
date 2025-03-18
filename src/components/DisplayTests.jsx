@@ -10,7 +10,13 @@ function DisplayTests({ $id, TestID, Name, Score, Status }) {
       className="bg-gradient-to-r from-yellow-200 to-orange-300 text-black rounded-lg 
         p-6 shadow-lg flex flex-col justify-center transition-transform duration-300 transform 
         hover:scale-105 hover:shadow-xl m-3 cursor-pointer"
-      onClick={() => navigate(`/test/${$id}`)}
+        onClick={() => {
+            if (Status === "Completed") {
+              navigate(`/test-summary/${$id}`); // Navigate to summary if completed
+            } else {
+              navigate(`/test/${$id}`); // Otherwise, navigate to test
+            }
+          }}
     >
       <h2>{Name}</h2>
       <h2>{Status}</h2>

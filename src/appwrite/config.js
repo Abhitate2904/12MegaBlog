@@ -65,9 +65,9 @@ export class Service {
     }
   }
 
-  async UpdateAnswers(questionId, userAnswer) {
+  async UpdateAnswers(questionId, userAnswer,answersData) {
     try {
-      
+      console.log("answersData", answersData);
       const question = await this.databases.getDocument(
         conf.appwriteDatabaseId,
         conf.appwritequestionID,
@@ -91,6 +91,7 @@ export class Service {
           Anwsered: userAnswer,
           Result: isCorrect,
           Score: score
+         
         }
       );
  console.log("Response",question.tests.$id);
@@ -100,7 +101,8 @@ export class Service {
         conf.appwritetestID,
         question.tests.$id,
         {
-          Status: "Completed"
+          Status: "Completed",
+          summary:answersData
         }
       );
     } catch (error) {

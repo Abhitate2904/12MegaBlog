@@ -63,6 +63,7 @@ function TestPage() {
 
   const handleSubmit = async () => {
     try {
+          
         // Loop through all answered questions
         for (const questionId in selectedAnswers) {
             await appwriteService.UpdateAnswers(questionId, selectedAnswers[questionId]);
