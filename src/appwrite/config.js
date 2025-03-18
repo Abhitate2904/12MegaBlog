@@ -65,7 +65,7 @@ export class Service {
     }
   }
 
-  async UpdateAnswers(questionId, userAnswer,answersData) {
+  async UpdateAnswers(questionId, userAnswer, answersData) {
     try {
       console.log("answersData", answersData);
       const question = await this.databases.getDocument(
@@ -73,7 +73,7 @@ export class Service {
         conf.appwritequestionID,
         questionId
       );
-     
+
       if (!question) {
         console.log("Question not found");
         return;
@@ -81,28 +81,26 @@ export class Service {
 
       const isCorrect = String(question.CorrectAnswer) === String(userAnswer);
       const score = isCorrect ? 1 : 0;
-       
 
-      const response= await this.databases.updateDocument(
+      const response = await this.databases.updateDocument(
         conf.appwriteDatabaseId,
         conf.appwritequestionID,
         questionId,
         {
           Anwsered: userAnswer,
           Result: isCorrect,
-          Score: score
-         
+          Score: score,
         }
       );
- console.log("Response",question.tests.$id);
- console.log("Response",question.tests.TestID);
-      const updateTest= await this.databases.updateDocument(
+      console.log("Response", question.tests.$id);
+      console.log("Response", question.tests.TestID);
+      const updateTest = await this.databases.updateDocument(
         conf.appwriteDatabaseId,
         conf.appwritetestID,
         question.tests.$id,
         {
           Status: "Completed",
-          summary:answersData
+          summary: answersData,
         }
       );
     } catch (error) {
@@ -177,6 +175,8 @@ export class Service {
   getFilePreview(fileId) {
     return this.bucket.getFilePreview(conf.appwriteBucketId, fileId);
   }
+
+   
 }
 
 const service = new Service();

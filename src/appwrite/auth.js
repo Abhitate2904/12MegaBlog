@@ -54,6 +54,18 @@ export class AuthService {
             console.log("Appwrite serive :: logout :: error", error);
         }
     }
+     async getSessions()   {
+        try {
+            return await account.listSessions();
+        } catch (error) {
+            console.error("Error fetching sessions:", error.message);
+            return null;
+        }
+    }
+    
+     async deleteSession(sessionId)  {
+        return await this.account.deleteSession(sessionId);
+    }
 }
 
 const authService = new AuthService();

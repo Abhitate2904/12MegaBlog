@@ -42,7 +42,12 @@ const router = createBrowserRouter([
       },
       {
         path: "/all-tests/:subjectid",
-        element: <AllTest />,
+        element: (
+          <AuthLayout authentication>
+            {" "}
+            <AllTest />
+          </AuthLayout>
+        ),
       },
       {
         path: "/all-tests",
