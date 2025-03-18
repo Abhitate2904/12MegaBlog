@@ -56,7 +56,7 @@ export class AuthService {
     }
      async getSessions()   {
         try {
-            return await account.listSessions();
+            return await this.account.listSessions();
         } catch (error) {
             console.error("Error fetching sessions:", error.message);
             return null;
