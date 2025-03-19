@@ -16,7 +16,9 @@ function Login() {
   const login = async (data) => {
     setError("");
     try {
+      console.log("LOGIN"+ data);
       const session = await authService.login(data);
+      console.log(session);
       if (session) {
         const userData = await authService.getCurrentUser();
         if (userData) {
