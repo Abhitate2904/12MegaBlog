@@ -10,7 +10,7 @@ function App() {
   const [loading, setLoading] = useState(true)
   const dispatch = useDispatch()
   const location = useLocation();
-    const hideHeaderFooter = location.pathname.includes('/test/') || location.pathname.includes('/login') || location.pathname.includes('/signup');
+    const hideHeaderFooter =location.pathname === '/' || location.pathname.includes('/test/') || location.pathname.includes('/login') || location.pathname.includes('/signup');
 
   useEffect(() => {
     authService.getCurrentUser()
