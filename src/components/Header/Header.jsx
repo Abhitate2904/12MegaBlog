@@ -1,68 +1,74 @@
-import React from 'react'
-import {Container, Logo, LogoutBtn} from '../index'
-import { Link } from 'react-router-dom'
-import {useSelector} from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import React from "react";
+import { Container, Navbar, Nav, Button } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import LogoutBtn from "./LogoutBtn";
 
 function Header() {
-  const authStatus = useSelector((state) => state.auth.status)
-  const navigate = useNavigate()
+  const authStatus = useSelector((state) => state.auth.status);
+  const navigate = useNavigate();
 
   const navItems = [
-    {
-      name: 'Home',
-      slug: "/",
-      active: true
-    }, 
-    {
-      name: "Login",
-      slug: "/login",
-      active: !authStatus,
-  },
-  {
-      name: "Signup",
-      slug: "/signup",
-      active: !authStatus,
-  },
-  {
-      name: "All Test",
-      slug: "/all-tests",
-      active: authStatus,
-  }
-  ]
-
+    { name: "Home", slug: "/", active: true },
+    { name: "Login", slug: "/login", active: !authStatus },
+    { name: "Signup", slug: "/signup", active: !authStatus },
+    { name: "All Tests", slug: "/all-tests", active: authStatus },
+  ];
 
   return (
-    <header className='py-3 shadow bg-[rgb(6,97,167)]'>
+    <Navbar
+      expand="lg"
+      style={{
+        background: "linear-gradient(to right, #004aad, #007bff)",
+        padding: "12px 0",
+      }}
+      variant="dark"
+      sticky="top"
+    >
       <Container>
-        <nav className='flex'>
-          <div className='mr-4'>
-            <Link to='/'>
-               
+        <Navbar.Toggle aria-controls="navbar-nav" />
+        <Navbar.Collapse id="navbar-nav">
+          <Nav className="ms-auto">
+            {navItems.map(
+              (item) =>
+                item.active && (
+                  <Nav.Item key={item.name} className="mx-2">
+                    <Button
+                      variant="light"
+                      style={{
+                        padding: "10px 20px",
+                        borderRadius: "30px",
+                        fontSize: "16px",
+                        transition: "all 0.3s ease",
+                      }}
+                      onClick={() => navigate(item.slug)}
+                      onMouseEnter={(e) =>
+                        (e.target.style.transform = "scale(1.1)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.target.style.transform = "scale(1)")
+                      }
+                    >
+                      {item.name}
+                    </Button>
+                  </Nav.Item>
+                )
+            )}
 
-              </Link>
-          </div>
-          <ul className='flex ml-auto'>
-            {navItems.map((item) => 
-            item.active ? (
-              <li key={item.name}>
-                <button
-                onClick={() => navigate(item.slug)}
-                className='inline-bock px-6 py-2 duration-200 hover:bg-blue-100 rounded-full'
-                >{item.name}</button>
-              </li>
-            ) : null
-            )}
             {authStatus && (
-              <li>
+              <Nav.Item className="mx-2">
+                {authStatus && (
+              <Nav.Item className="mx-2">
                 <LogoutBtn />
-              </li>
+              </Nav.Item>
             )}
-          </ul>
-        </nav>
-        </Container>
-    </header>
-  )
+              </Nav.Item>
+            )}
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
 }
 
-export default Header
+export default Header;

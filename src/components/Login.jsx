@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login as authLogin } from "../store/authSlice";
-import { Button, Input, Logo } from "./index";
 import { useDispatch } from "react-redux";
-import authService from "../appwrite/auth";
 import { useForm } from "react-hook-form";
+import { Form, Button, Container, Card, Alert } from "react-bootstrap";
+import { login as authLogin } from "../store/authSlice";
+import authService from "../appwrite/auth";
+import Logo from "./Logo";
 
 function Login() {
   const navigate = useNavigate();
@@ -19,17 +20,14 @@ function Login() {
       if (session) {
         const userData = await authService.getCurrentUser();
         if (userData) {
-          // **Step 3: Fetch all existing sessions**
           const sessions = await authService.getSessions();
-
-           // **Step 4: Delete all previous sessions except the current one**
-           if (sessions?.sessions?.length) {
+          if (sessions?.sessions?.length) {
             for (const oldSession of sessions.sessions) {
-                if (oldSession.$id !== session.$id) {
-                    await authService.deleteSession(oldSession.$id);
-                }
+              if (oldSession.$id !== session.$id) {
+                await authService.deleteSession(oldSession.$id);
+              }
             }
-        }
+          }
           dispatch(authLogin(userData));
           navigate("/");
         }
@@ -40,57 +38,58 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center w-full">
-      <div
-        className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}
-      >
-        <div className="mb-2 flex justify-center">
-          <span className="inline-block w-full max-w-[100px]">
-            <Logo width="100%" />
-          </span>
-        </div>
-        <h2 className="text-center text-2xl font-bold leading-tight">
-          Sign in to your account
-        </h2>
-        <p className="mt-2 text-center text-base text-black/60">
-          Don&apos;t have any account?&nbsp;
-          <Link
-            to="/signup"
-            className="font-medium text-primary transition-all duration-200 hover:underline"
-          >
-            Sign Up
-          </Link>
-        </p>
-        {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
-        <form onSubmit={handleSubmit(login)} className="mt-8">
-          <div className="space-y-5">
-            <Input
-              label="Email: "
-              placeholder="Enter your email"
-              type="email"
-              {...register("email", {
-                required: true,
-                validate: {
-                  matchPatern: (value) =>
-                    /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
-                    "Email address must be a valid address",
-                },
-              })}
-            />
-            <Input
-              label="Password: "
-              type="password"
-              placeholder="Enter your password"
-              {...register("password", {
-                required: true,
-              })}
-            />
-            <Button type="submit" className="w-full">
-              Sign in
-            </Button>
-          </div>
-        </form>
-      </div>
+    <div
+    style={{
+      backgroundImage: "url('/Logo.jpg')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      minHeight: "100vh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+  >
+      <Container className="d-flex justify-content-center align-items-center min-vh-100">
+        <Card className="p-4 shadow-lg" style={{ maxWidth: "400px", width: "100%" }}>
+          <Card.Body>
+            <div className="text-center mb-3">
+              <Logo width="100px" />
+            </div>
+            <h2 className="text-center">Sign in to your account</h2>
+            <p className="text-center text-muted">
+              Don&apos;t have an account?&nbsp;
+              <Link to="/signup" className="text-primary">Sign Up</Link>
+            </p>
+            {error && <Alert variant="danger" className="text-center">{error}</Alert>}
+            <Form onSubmit={handleSubmit(login)}>
+              <Form.Group className="mb-3">
+                <Form.Label>Email:</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="Enter your email"
+                  {...register("email", {
+                    required: true,
+                    validate: {
+                      matchPattern: (value) =>
+                        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
+                        "Invalid email address",
+                    },
+                  })}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Password:</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Enter your password"
+                  {...register("password", { required: true })}
+                />
+              </Form.Group>
+              <Button type="submit" variant="primary" className="w-100">Sign in</Button>
+            </Form>
+          </Card.Body>
+        </Card>
+      </Container>
     </div>
   );
 }

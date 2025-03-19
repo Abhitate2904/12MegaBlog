@@ -1,22 +1,41 @@
 import React from "react";
-import appwriteService from "../appwrite/config";
-import { Link, useNavigate } from "react-router-dom";
+import { Card } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 function PostCard({ title, createdAt, subjectid, description }) {
   const navigate = useNavigate();
 
   return (
-    <div
-  className="bg-gradient-to-r from-yellow-200 to-orange-300 text-brown-800 rounded-lg p-6 shadow-lg flex flex-col justify-center transition-transform duration-300 transform hover:scale-105 hover:shadow-xl m-3 cursor-pointer max-w-xs"
-  onClick={() => navigate(`/all-tests/${subjectid}`)}
->
-  <h2 className="text-xl font-bold text-center break-words">{title}</h2>
-  <h3 className="text-sm opacity-80 break-words mt-2 text-center">
-    {description}
-  </h3>
-</div>
-
-
+    <Card
+      className="shadow-lg border-3 rounded-lg overflow-hidden transition-transform"
+      style={{
+        background: "linear-gradient(135deg, #ffafbd, #ffc3a0)",
+        color: "#333",
+        cursor: "pointer",
+        minWidth: "280px", // Ensures all cards have the same width
+        maxWidth: "300px", // Prevents excessive size variation
+        minHeight: "260px", // Keeps height consistent
+        border: "3px solid #ff758c", // Pretty border
+        borderRadius: "12px",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+      }}
+      onClick={() => navigate(`/all-tests/${subjectid}`)}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = "scale(1.05)";
+        e.currentTarget.style.boxShadow = "0 8px 20px rgba(255, 117, 140, 0.5)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = "scale(1)";
+        e.currentTarget.style.boxShadow = "none";
+      }}
+    >
+      <Card.Body className="text-center d-flex flex-column justify-content-center">
+        <Card.Title className="fw-bold" style={{ fontSize: "1.2rem" }}>
+          {title}
+        </Card.Title>
+        <Card.Text className="small">{description}</Card.Text>
+      </Card.Body>
+    </Card>
   );
 }
 

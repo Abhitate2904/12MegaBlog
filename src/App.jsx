@@ -10,7 +10,7 @@ function App() {
   const [loading, setLoading] = useState(true)
   const dispatch = useDispatch()
   const location = useLocation();
-    const hideHeaderFooter = location.pathname.includes('/test/');
+    const hideHeaderFooter = location.pathname.includes('/test/') || location.pathname.includes('/login') || location.pathname.includes('/signup');
 
   useEffect(() => {
     authService.getCurrentUser()
@@ -25,15 +25,16 @@ function App() {
   }, [])
   
   return !loading ? (
-    <div className='min-h-screen flex flex-wrap content-between bg-gray-400 border-2 border-gray-600'>
-    <div className='w-full block'>
+    <div className="min-vh-100 d-flex flex-column bg-light border border-secondary">
+    <div className="w-100">
       {!hideHeaderFooter && <Header />}
-      <main>
+      <main className="flex-grow-1">
         <Outlet />
       </main>
       {!hideHeaderFooter && <Footer />}
     </div>
   </div>
+  
   
   ) : null
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { Container, Card, Spinner, Alert } from "react-bootstrap";
 import appwriteService from "../appwrite/config";
 
 function TestSummary() {
@@ -30,59 +31,74 @@ function TestSummary() {
   }, [testid]);
 
   if (loading) {
-    return <p className="text-center text-xl">Loading Summary...</p>;
+    return (
+      <Container className="text-center my-5">
+        <Spinner animation="border" variant="primary" />
+        <p className="mt-3 text-muted">Fetching test summary...</p>
+      </Container>
+    );
   }
 
   return (
-    <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-8">
-      <h1 className="text-2xl font-bold text-center mb-4">Test Summary</h1>
+    <Container className="my-5">
+      <h2 className="text-center text-dark fw-bold mb-4">Test Summary</h2>
 
       {questions.length === 0 ? (
-        <p className="text-center text-gray-500">No data available.</p>
+        <Alert variant="warning" className="text-center">
+          No test data available.
+        </Alert>
       ) : (
-        <ul>
+        <div className="d-flex flex-column align-items-center gap-4">
           {questions.map((question, index) => (
-            <li key={question.$id} className="mb-6 p-4 border rounded">
-              <p className="font-semibold">{index + 1}. {question.Question}</p>
+            <Card
+              key={question.$id}
+              className="w-100 shadow-sm border-primary border-2 rounded-3"
+              style={{ maxWidth: "600px", borderLeft: "5px solid #007bff" }} // Added border-left styling
+            >
+              <Card.Body>
+                <h5 className="fw-bold mb-3 text-primary">
+                  {index + 1}. {question.Question}
+                </h5>
 
-              {/* Options */}
-              <div className="mt-2">
-                {question.Options.map((option, optIndex) => (
-                  <div
-                    key={optIndex}
-                    className={`p-2 rounded ${
-                      String(option) === String(question.CorrectAnswer)  
-                        ? "bg-green-200" // Highlight correct answer
-                        : String(option) === String(question.Anwsered) 
-                        ? "bg-red-200" // Highlight incorrect user answer
-                        : "bg-gray-100"
+                {/* Options */}
+                <div className="d-flex flex-column gap-2">
+                  {question.Options.map((option, optIndex) => (
+                    <div
+                      key={optIndex}
+                      className={`p-2 text-center rounded fw-semibold ${
+                        String(option) === String(question.CorrectAnswer)
+                          ? "bg-success text-white shadow-sm border border-dark" // Correct Answer
+                          : String(option) === String(question.Anwsered)
+                          ? "bg-danger text-white shadow-sm border border-dark" // Incorrect Answer
+                          : "bg-light text-dark border border-secondary"
+                      }`}
+                    >
+                      {option}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Correct & User Answer */}
+                <div className="mt-3">
+                  <span className="fw-bold text-success">✔ Correct Answer: {String(question.CorrectAnswer)}</span>
+                  <p
+                    className={`fw-bold mt-1 ${
+                      String(question.CorrectAnswer) === String(question.Anwsered)
+                        ? "text-success"
+                        : "text-danger"
                     }`}
                   >
-                    {option}
-                  </div>
-                ))}
-              </div>
-
-              {/* Correct and Selected Answer */}
-              <p className="text-green-600 font-semibold mt-2">
-                ✅ Correct Answer: {String(question.CorrectAnswer)}
-              </p>
-              <p
-                className={`font-bold mt-1 ${
-                  String(question.CorrectAnswer) === String(question.Anwsered)
-                    ? "text-green-500"
-                    : "text-red-500"
-                }`}
-              >
-                {String(question.CorrectAnswer) === String(question.Anwsered)
-                  ? "✔ You got it right!"
-                  : `❌ Your Answer: ${question.Anwsered || "Not Answered"}`}
-              </p>
-            </li>
+                    {String(question.CorrectAnswer) === String(question.Anwsered)
+                      ? "✅ You got it right!"
+                      : `❌ Your Answer: ${question.Anwsered || "Not Answered"}`}
+                  </p>
+                </div>
+              </Card.Body>
+            </Card>
           ))}
-        </ul>
+        </div>
       )}
-    </div>
+    </Container>
   );
 }
 

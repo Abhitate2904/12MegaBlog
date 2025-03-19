@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Container, DisplayTests } from "../components";
+import { Container, Row, Col } from "react-bootstrap";
+import DisplayTests from "../components/DisplayTests"; // Ensure correct import
 import appwriteService from "../appwrite/config";
 
 function AllTest() {
@@ -13,34 +14,29 @@ function AllTest() {
         .getAllTest()
         .then((fetchedTests) => {
           const filteredTests = fetchedTests.filter((test) => {
-            return test.subjects?.$id == subjectid; // Ensure both are the same type
+            return test.subjects?.$id === subjectid;
           });
-
           setTests(filteredTests);
         })
         .catch((error) => console.error("Error fetching tests:", error));
     } else {
       appwriteService
         .getAllTest()
-        .then((filteredTests) => {
-          setTests(filteredTests);
-        })
+        .then((allTests) => setTests(allTests))
         .catch((error) => console.error("Error fetching tests:", error));
     }
   }, [subjectid]);
 
   return (
-    <div className="w-full py-8">
-      <Container>
-        <div className="flex flex-wrap">
-          {tests.map((test) => (
-            <div key={test.TestID} className="p-2 w-1/4">
-              <DisplayTests {...test} />
-            </div>
-          ))}
-        </div>
-      </Container>
-    </div>
+    <Container className="py-4">
+      <Row className="justify-content-center">
+        {tests.map((test) => (
+          <Col key={test.TestID} xs={12} sm={6} md={4} lg={3} className="mb-4">
+            <DisplayTests {...test} />
+          </Col>
+        ))}
+      </Row>
+    </Container>
   );
 }
 
