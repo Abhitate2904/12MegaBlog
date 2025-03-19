@@ -31,7 +31,7 @@ function Login() {
             }
           }
           dispatch(authLogin(userData));
-          navigate("/");
+          navigate("/home");
         }
       }
     } catch (error) {
