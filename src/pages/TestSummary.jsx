@@ -9,6 +9,7 @@ function TestSummary() {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [queans, setQueans] = useState([]); // Stores user's selected answers
+  const [score, setScore] = useState(0);
 
   useEffect(() => {
     async function fetchTestSummary() {
@@ -49,6 +50,14 @@ function TestSummary() {
         // Parse the JSON file content (answers)
         const testData = JSON.parse(fileData);
         setQueans(testData.answers); // User's selected answers
+        const totalQuestions = filteredQuestions.length;
+        const correctAnswers = testData.answers.filter(
+          (ans) =>
+            filteredQuestions.find((q) => q.$id === ans.questionId)?.CorrectAnswer === ans.selectedAnswer
+        ).length;
+        const calculatedScore = ((correctAnswers / totalQuestions) * 100).toFixed(2);
+
+        setScore(calculatedScore);
       } catch (error) {
         console.error("Error fetching test summary:", error);
       }
@@ -79,6 +88,12 @@ function TestSummary() {
   return (
     <Container className="my-5">
       <h2 className="text-center text-dark fw-bold mb-4">Test Summary</h2>
+
+      <div className="text-center mb-4">
+        <h4 className="fw-bold">
+          🎯 Your Score: <span className="text-primary">{score}%</span>
+        </h4>
+      </div>
 
       {mappedQuestions.length === 0 ? (
         <Alert variant="warning" className="text-center">
