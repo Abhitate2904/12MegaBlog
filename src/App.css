@@ -1,85 +1,31 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  text-align: center;
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-/* Ensure the logo scales properly on mobile */
-.logo {
-  height: 5em; /* Reduced size for smaller screens */
-  max-width: 100%;
-  padding: 1em;
-  will-change: filter;
-  transition: filter 300ms, transform 200ms ease-in-out;
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.logo:hover {
-  filter: drop-shadow(0 0 1.5em #646cffaa);
-  transform: scale(1.05); /* Slight scaling effect */
+.main-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-bottom: 60px; /* Prevents content from overlapping footer */
 }
 
-/* Separate React-specific hover effect */
-.logo.react:hover {
-  filter: drop-shadow(0 0 1.5em #61dafbaa);
+.fixed-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
-/* Make animations smoother */
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Reduce animation on mobile for better performance */
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 15s linear;
-  }
-}
-
-/* Adjust padding for smaller screens */
-.card {
-  padding: 1.5em;
-  border-radius: 10px;
-  background-color: #fff8dc; /* Light yellow background for better contrast */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Make sure text is readable */
-.read-the-docs {
-  color: #e82525; /* Darker text for better readability */
-}
-
-/* Improve responsiveness */
-@media (max-width: 768px) {
-  #root {
-    padding: 1rem;
-  }
-
-  .logo {
-    height: 4em; /* Slightly smaller for mobile */
-  }
-
-  .card {
-    padding: 1.2em;
-  }
-}
-
-/* Extra small devices (phones) */
-@media (max-width: 480px) {
-  .logo {
-    height: 3.5em;
-  }
-
-  .card {
-    padding: 1em;
-  }
-
-  .read-the-docs {
-    font-size: 0.9rem; /* Slightly smaller text */
-  }
+.fixed-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 1000;
 }

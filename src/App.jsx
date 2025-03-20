@@ -1,42 +1,42 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import './App.css'
-import authService from "./appwrite/auth"
-import {login, logout} from "./store/authSlice"
-import { Footer, Header } from './components'
-import { Outlet,useLocation } from 'react-router-dom'
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import "./App.css";
+import authService from "./appwrite/auth";
+import { login, logout } from "./store/authSlice";
+import { Footer, Header } from "./components";
+import { Outlet, useLocation } from "react-router-dom";
 
 function App() {
-  const [loading, setLoading] = useState(true)
-  const dispatch = useDispatch()
+  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
   const location = useLocation();
-    const hideHeaderFooter = location.pathname.includes('/test/') || location.pathname.includes('/login') || location.pathname.includes('/signup');
+  const hideHeaderFooter =
+    location.pathname.includes("/test/") ||
+    location.pathname.includes("/login") ||
+    location.pathname.includes("/signup");
 
   useEffect(() => {
-    authService.getCurrentUser()
-    .then((userData) => {
-      if (userData) {
-        dispatch(login({userData}))
-      } else {
-        dispatch(logout())
-      }
-    })
-    .finally(() => setLoading(false))
-  }, [])
-  
+    authService
+      .getCurrentUser()
+      .then((userData) => {
+        if (userData) {
+          dispatch(login({ userData }));
+        } else {
+          dispatch(logout());
+        }
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
   return !loading ? (
-    <div className="min-vh-100 d-flex flex-column bg-light border border-secondary">
-    <div className="w-100">
-      {!hideHeaderFooter && <Header />}
-      <main className="flex-grow-1">
+    <div className="app-container bg-light border border-secondary">
+      {!hideHeaderFooter && <Header className="fixed-header" />}
+      <main className="main-content">
         <Outlet />
       </main>
-      {!hideHeaderFooter && <Footer />}
+      {!hideHeaderFooter && <Footer className="fixed-footer" />}
     </div>
-  </div>
-  
-  
-  ) : null
+  ) : null;
 }
 
-export default App
+export default App;

@@ -12,8 +12,8 @@ function DisplayTests({ $id, TestID, Name, Score, Status }) {
       border: "2px solid #388E3C",
     },
     NotAttempted: {
-      background: "linear-gradient(135deg, #FF9800, #FFB74D)", // Orange for pending
-      border: "2px solid #F57C00",
+      background: "linear-gradient(135deg,rgb(246, 45, 5), #FFB74D)", // Orange for pending
+      border: "2px solidrgb(245, 45, 0)",
     },
     NotStarted: {
       background: "linear-gradient(135deg, #2196F3, #64B5F6)", // Blue for not started
