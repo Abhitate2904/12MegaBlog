@@ -91,8 +91,7 @@ export class Service {
           Score: score,
         }
       );
-      console.log("Response", question.tests.$id);
-      console.log("Response", question.tests.TestID);
+
       const updateTest = await this.databases.updateDocument(
         conf.appwriteDatabaseId,
         conf.appwritetestID,
@@ -126,8 +125,7 @@ export class Service {
         conf.appwriteDatabaseId,
         conf.appwriteSubCollectionId
       );
-      console.log("Subjects fetched:", response);
-      console.log("Subjects fetched:", response.documents);
+
       return response.documents; // Return array of documents
     } catch (error) {
       console.error("Error fetching subjects:", error);
@@ -159,7 +157,7 @@ export class Service {
       return null;
     }
   }
-  
+
   // file upload service
 
   async uploadFile(file) {
@@ -198,8 +196,8 @@ export class Service {
         {
           UserID,
           TestId,
-          fileId, 
-          Status:"Completed"
+          fileId,
+          Status: "Completed",
         }
       );
     } catch (error) {
@@ -214,15 +212,46 @@ export class Service {
         conf.appwritetestresultcollectionID,
         [Query.equal("UserID", userID)]
       );
-      console.log("Test results fetched:", response );
+      console.log("Test results fetched:", response);
       return response.documents;
     } catch (error) {
       console.error("Error fetching test results:", error);
       return [];
     }
   }
-  
-  
+
+  async getTestResultFile(fileID) {
+    try {
+      // Fetch file metadata first
+      const fileMetadata = await this.bucket.getFile(
+        conf.appwriteBucketId,
+        fileID
+      );
+
+      // Generate the file download URL
+      const fileDownload = await this.bucket.getFileDownload(
+        conf.appwriteBucketId,
+        fileID
+      );
+
+      // Fetch and convert response to text or blob
+      const response = await fetch(fileDownload.href, {
+        headers: {
+          "X-Appwrite-Project": conf.appwriteProjectId, // Ensure project ID is sent
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to download file: ${response.statusText}`);
+      }
+      // Convert response to text (JSON file) or blob (for actual file download)
+      const fileData = await response.text(); // Change to `response.blob()` for files
+
+      return fileData;
+    } catch (error) {
+      console.error("Error fetching test result file:", error);
+      return null;
+    }
+  }
 }
 
 const service = new Service();

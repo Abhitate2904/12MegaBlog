@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Card, Button, Alert, ProgressBar, Form, Modal } from "react-bootstrap";
+import {
+  Container,
+  Card,
+  Button,
+  Alert,
+  ProgressBar,
+  Form,
+  Modal,
+} from "react-bootstrap";
 import appwriteService from "../appwrite/config";
 import authService from "../appwrite/auth";
 
@@ -20,7 +28,9 @@ function TestPage() {
         .getTestQuestions()
         .then((fetchedQuestions) => {
           if (fetchedQuestions) {
-            const filteredTests = fetchedQuestions.filter((test) => test.tests?.$id === testid);
+            const filteredTests = fetchedQuestions.filter(
+              (test) => test.tests?.$id === testid
+            );
             setQuestions(filteredTests);
           }
           setLoading(false);
@@ -107,7 +117,7 @@ function TestPage() {
       console.log("File uploaded successfully:", uploadedFile);
 
       // Save file details to the database (optional)
-      await appwriteService.saveTestResults(userID,testID,uploadedFile.$id);
+      await appwriteService.saveTestResults(userID, testID, uploadedFile.$id);
 
       // Show success modal
       setShowSuccessModal(true);
@@ -129,13 +139,31 @@ function TestPage() {
     <Container className="mt-4">
       {/* Warning Message */}
       <Alert variant="danger" className="text-center">
-        <strong>Important:</strong> You cannot exit the test once it starts. Please complete the test before leaving.
+        <strong>Important:</strong> You cannot exit the test once it starts.
+        Please complete the test before leaving.
       </Alert>
 
       {/* Timer */}
       <div className="text-center mb-4">
-        <h5 className="text-danger fw-bold">Time Left: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}</h5>
-        <ProgressBar now={(timeLeft / 600) * 100} variant="danger" />
+        <h5
+          className={`fw-bold ${
+            timeLeft > 300
+              ? "text-success"
+              : timeLeft > 150
+              ? "text-warning"
+              : "text-danger"
+          }`}
+        >
+          Time Left: {Math.floor(timeLeft / 60)}:
+          {String(timeLeft % 60).padStart(2, "0")}
+        </h5>
+
+        <ProgressBar
+          now={(timeLeft / 600) * 100}
+          variant={
+            timeLeft > 300 ? "success" : timeLeft > 150 ? "warning" : "danger"
+          }
+        />
       </div>
 
       {/* Questions Section */}
@@ -157,7 +185,9 @@ function TestPage() {
                       : "bg-light"
                   }`}
                   style={{ cursor: "pointer" }}
-                  onClick={() => handleOptionSelect(questions[currentQuestion].$id, option)}
+                  onClick={() =>
+                    handleOptionSelect(questions[currentQuestion].$id, option)
+                  }
                 >
                   {option}
                 </div>
@@ -169,7 +199,11 @@ function TestPage() {
 
       {/* Navigation Buttons */}
       <div className="d-flex justify-content-between mt-4">
-        <Button variant="secondary" onClick={handlePrevious} disabled={currentQuestion === 0}>
+        <Button
+          variant="secondary"
+          onClick={handlePrevious}
+          disabled={currentQuestion === 0}
+        >
           ⬅ Previous
         </Button>
         {currentQuestion < questions.length - 1 ? (
@@ -192,7 +226,10 @@ function TestPage() {
           <p className="text-success fw-bold">
             Your test has been successfully submitted! 🎯
           </p>
-          <p>Thank you for completing the test. You can check your results in the dashboard.</p>
+          <p>
+            Thank you for completing the test. You can check your results in the
+            dashboard.
+          </p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="primary" onClick={handleCloseModal}>
