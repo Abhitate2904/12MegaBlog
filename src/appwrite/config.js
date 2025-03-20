@@ -67,7 +67,6 @@ export class Service {
 
   async UpdateAnswers(questionId, userAnswer, answersData) {
     try {
-      console.log("answersData", answersData);
       const question = await this.databases.getDocument(
         conf.appwriteDatabaseId,
         conf.appwritequestionID,
@@ -147,6 +146,20 @@ export class Service {
     } catch (error) {}
   }
 
+  async uploadTestResultFile(file) {
+    try {
+      console.log("Bucket ID:", conf.appwriteBucketId);
+      return await this.bucket.createFile(
+        conf.appwriteBucketId, // Your storage bucket ID
+        ID.unique(), // Unique file ID
+        file
+      );
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      return null;
+    }
+  }
+  
   // file upload service
 
   async uploadFile(file) {
@@ -176,7 +189,40 @@ export class Service {
     return this.bucket.getFilePreview(conf.appwriteBucketId, fileId);
   }
 
-   
+  async saveTestResults(UserID, TestId, fileId) {
+    try {
+      return await this.databases.createDocument(
+        conf.appwriteDatabaseId,
+        conf.appwritetestresultcollectionID,
+        ID.unique(),
+        {
+          UserID,
+          TestId,
+          fileId, 
+          Status:"Completed"
+        }
+      );
+    } catch (error) {
+      console.error("Error saving test results:", error);
+    }
+  }
+
+  async getTestResultsByUser(userID) {
+    try {
+      const response = await this.databases.listDocuments(
+        conf.appwriteDatabaseId,
+        conf.appwritetestresultcollectionID,
+        [Query.equal("UserID", userID)]
+      );
+      console.log("Test results fetched:", response );
+      return response.documents;
+    } catch (error) {
+      console.error("Error fetching test results:", error);
+      return [];
+    }
+  }
+  
+  
 }
 
 const service = new Service();

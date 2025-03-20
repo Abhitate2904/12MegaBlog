@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Card, Button, Alert, ProgressBar, Form, Modal } from "react-bootstrap";
 import appwriteService from "../appwrite/config";
+import authService from "../appwrite/auth";
 
 function TestPage() {
   const { testid } = useParams();
@@ -11,7 +12,7 @@ function TestPage() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [timeLeft, setTimeLeft] = useState(600); // 10-minute timer
-  const [showNoQuestionsModal, setShowNoQuestionsModal] = useState(false); // Modal state
+  const [showSuccessModal, setShowSuccessModal] = useState(false); // Success popup
 
   useEffect(() => {
     if (testid) {
@@ -19,7 +20,7 @@ function TestPage() {
         .getTestQuestions()
         .then((fetchedQuestions) => {
           if (fetchedQuestions) {
-            const filteredTests = fetchedQuestions.filter((test) => test.tests?.$id == testid);
+            const filteredTests = fetchedQuestions.filter((test) => test.tests?.$id === testid);
             setQuestions(filteredTests);
           }
           setLoading(false);
@@ -43,10 +44,6 @@ function TestPage() {
   }, [timeLeft]);
 
   const handleNext = () => {
-    if (questions.length === 0) {
-      setShowNoQuestionsModal(true); // Show popup if no questions exist
-      return;
-    }
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     }
@@ -64,14 +61,64 @@ function TestPage() {
 
   const handleSubmit = async () => {
     try {
-      for (const questionId in selectedAnswers) {
-        await appwriteService.UpdateAnswers(questionId, selectedAnswers[questionId]);
+      // Get current user
+      const user = await authService.getCurrentUser();
+      if (!user) {
+        alert("User not logged in. Please log in to submit the test.");
+        navigate("/login");
+        return;
       }
-      alert("Test submitted successfully!");
-      navigate("/"); // Redirect to home or results page
+
+      // Create test results object
+      const userID = user.$id; // User ID from Appwrite
+      const testID = testid; //
+      const answers = Object.entries(selectedAnswers).map(
+        ([questionId, selectedAnswer]) => ({
+          questionId,
+          selectedAnswer,
+        })
+      );
+      const testResults = {
+        userID,
+        testID,
+        answers,
+      };
+
+      console.log("Saving test results:", testResults);
+      const jsonString = JSON.stringify(testResults, null, 2);
+      // Create a Blob object (For Download)
+      const blob = new Blob([jsonString], { type: "application/json" });
+      // Create a download link
+      const file = new File([blob], `test_results_${userID}_${testID}.json`, {
+        type: "application/json",
+      });
+      console.log("file:", file);
+      const uploadedFile = await appwriteService.uploadTestResultFile(file);
+
+      //  console.log("testResults:", TestSummary);
+      //await appwriteService.saveTestResults(testid, TestSummary, user.$id);
+      // for (const questionId in selectedAnswers) {
+      // await appwriteService.UpdateAnswers(questionId, selectedAnswers[questionId]);
+      // }
+      if (!uploadedFile) {
+        throw new Error("File upload failed");
+      }
+
+      console.log("File uploaded successfully:", uploadedFile);
+
+      // Save file details to the database (optional)
+      await appwriteService.saveTestResults(userID,testID,uploadedFile.$id);
+
+      // Show success modal
+      setShowSuccessModal(true);
     } catch (error) {
       console.error("Error submitting test:", error);
     }
+  };
+
+  const handleCloseModal = () => {
+    setShowSuccessModal(false);
+    navigate("/"); // Redirect to home
   };
 
   if (loading) {
@@ -101,26 +148,20 @@ function TestPage() {
               {currentQuestion + 1}. {questions[currentQuestion].Question}
             </h5>
             <Form>
-              {questions[currentQuestion].Options.map((option, index) => {
-                // Check if the option is in exponential notation
-                const isExponential = /^[+-]?\d+(\.\d+)?e[+-]?\d+$/i.test(option);
-                const formattedOption = isExponential ? Number(option).toExponential(2) : option;
-
-                return (
-                  <div
-                    key={index}
-                    className={`p-3 mb-2 border rounded text-center fw-bold ${
-                      selectedAnswers[questions[currentQuestion].$id] === option
-                        ? "bg-primary text-white"
-                        : "bg-light"
-                    }`}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => handleOptionSelect(questions[currentQuestion].$id, option)}
-                  >
-                    {formattedOption}
-                  </div>
-                );
-              })}
+              {questions[currentQuestion].Options.map((option, index) => (
+                <div
+                  key={index}
+                  className={`p-3 mb-2 border rounded text-center fw-bold ${
+                    selectedAnswers[questions[currentQuestion].$id] === option
+                      ? "bg-primary text-white"
+                      : "bg-light"
+                  }`}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => handleOptionSelect(questions[currentQuestion].$id, option)}
+                >
+                  {option}
+                </div>
+              ))}
             </Form>
           </Card.Body>
         </Card>
@@ -142,17 +183,20 @@ function TestPage() {
         )}
       </div>
 
-      {/* No Questions Modal */}
-      <Modal show={showNoQuestionsModal} onHide={() => setShowNoQuestionsModal(false)}>
+      {/* Success Modal */}
+      <Modal show={showSuccessModal} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
-          <Modal.Title>⚠ No Questions Available</Modal.Title>
+          <Modal.Title>🎉 Test Submitted!</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          There are no questions available for this test. Please check with your instructor or try another test.
+          <p className="text-success fw-bold">
+            Your test has been successfully submitted! 🎯
+          </p>
+          <p>Thank you for completing the test. You can check your results in the dashboard.</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowNoQuestionsModal(false)}>
-            Close
+          <Button variant="primary" onClick={handleCloseModal}>
+            Go to Home 🏠
           </Button>
         </Modal.Footer>
       </Modal>

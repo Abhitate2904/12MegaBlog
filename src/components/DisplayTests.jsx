@@ -5,15 +5,30 @@ import { useNavigate } from "react-router-dom";
 function DisplayTests({ $id, TestID, Name, Score, Status }) {
   const navigate = useNavigate();
 
+  // Define colors based on status
+  const cardStyles = {
+    Completed: {
+      background: "linear-gradient(135deg, #4CAF50, #81C784)", // Green for completed
+      border: "2px solid #388E3C",
+    },
+    NotAttempted: {
+      background: "linear-gradient(135deg, #FF9800, #FFB74D)", // Orange for pending
+      border: "2px solid #F57C00",
+    },
+    NotStarted: {
+      background: "linear-gradient(135deg, #2196F3, #64B5F6)", // Blue for not started
+      border: "2px solid #1976D2",
+    },
+  };
+
   return (
     <Card
       className="shadow-lg border-2 rounded-lg overflow-hidden transition-transform"
       style={{
-        background: "linear-gradient(135deg, #ffafbd, #ffc3a0)",
+        ...(cardStyles[Status] || cardStyles["NotStarted"]), // Default to NotStarted if Status is unknown
         color: "#333",
         cursor: "pointer",
         minHeight: "180px",
-        border: "2px solid #ff9a44",
         borderRadius: "12px",
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
       }}
@@ -26,7 +41,7 @@ function DisplayTests({ $id, TestID, Name, Score, Status }) {
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = "scale(1.05)";
-        e.currentTarget.style.boxShadow = "0 8px 20px rgba(238, 74, 14, 0.5)";
+        e.currentTarget.style.boxShadow = "0 8px 20px rgba(0, 0, 0, 0.2)";
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = "scale(1)";
