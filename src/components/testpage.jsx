@@ -159,9 +159,9 @@ function TestPage() {
         </h5>
 
         <ProgressBar
-          now={(timeLeft / 600) * 100}
+          now={(timeLeft / 1500) * 100}
           variant={
-            timeLeft > 300 ? "success" : timeLeft > 150 ? "warning" : "danger"
+            timeLeft > 900 ? "success" : timeLeft > 450 ? "warning" : "danger"
           }
         />
       </div>
