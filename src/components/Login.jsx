@@ -58,10 +58,7 @@ function Login() {
               <Logo width="100px" />
             </div>
             <h2 className="text-center">Sign in to your account</h2>
-            <p className="text-center text-muted">
-              Don&apos;t have an account?&nbsp;
-              <Link to="/signup" className="text-primary">Sign Up</Link>
-            </p>
+            
             {error && <Alert variant="danger" className="text-center">{error}</Alert>}
             <Form onSubmit={handleSubmit(login)}>
               <Form.Group className="mb-3">
