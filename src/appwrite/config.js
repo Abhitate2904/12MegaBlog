@@ -110,7 +110,10 @@ export class Service {
     try {
       const response = await this.databases.listDocuments(
         conf.appwriteDatabaseId,
-        conf.appwritequestionID
+        conf.appwritequestionID,
+        [
+          Query.limit(100)  
+        ]
       );
       return response.documents;
     } catch (error) {
